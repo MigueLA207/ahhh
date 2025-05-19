@@ -405,4 +405,72 @@ public class ControlVenta {
             objetoConexion.cerrarConexion();
         }
     }
+    public void crearFacturaPDF(String idCliente, String nombreCliente, JTable tablaProductos, String iva, String total) {
+        try {
+            
+            java.io.File directorio = new java.io.File("facturas");
+            if (!directorio.exists()) {
+                directorio.mkdir();
+            }
+
+           
+            String fecha = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String nombreArchivo = "factura_" + idCliente + "_" + fecha + ".pdf";
+
+
+            java.io.File archivoPDF = new java.io.File(directorio, nombreArchivo);
+
+     
+            Document documento = new Document();
+            PdfWriter.getInstance(documento, new FileOutputStream(archivoPDF));
+            documento.open();
+
+        
+            documento.add(new Paragraph("Factura de Venta", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18)));
+            documento.add(new Paragraph("Fecha: " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date())));
+            documento.add(new Paragraph("Cliente: " + nombreCliente + " (ID: " + idCliente + ")"));
+            documento.add(Chunk.NEWLINE);
+
+
+            PdfPTable tabla = new PdfPTable(4); 
+            tabla.addCell("Producto");
+            tabla.addCell("Precio");
+            tabla.addCell("Cantidad");
+            tabla.addCell("Subtotal");
+
+            for (int i = 0; i < tablaProductos.getRowCount(); i++) {
+                tabla.addCell(tablaProductos.getValueAt(i, 1).toString()); // nombre
+                tabla.addCell(tablaProductos.getValueAt(i, 2).toString()); // precio venta
+                tabla.addCell(tablaProductos.getValueAt(i, 3).toString()); // cantidad
+                tabla.addCell(tablaProductos.getValueAt(i, 4).toString()); // subtotal
+            }
+
+            documento.add(tabla);
+            documento.add(Chunk.NEWLINE);
+
+
+            documento.add(new Paragraph("IVA: " + iva));
+            documento.add(new Paragraph("TOTAL A PAGAR: " + total));
+
+            documento.close();
+
+            System.out.println("Factura generada: " + archivoPDF.getAbsolutePath());
+
+            // Abrir el PDF automáticamente, si el SO lo permite
+            if (Desktop.isDesktopSupported()) {
+                Desktop desktop = Desktop.getDesktop();
+                try {
+                    desktop.open(archivoPDF);
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(null, "No se pudo abrir el PDF automáticamente aa: " + e.getMessage());
+                }
+            }
+
+            JOptionPane.showMessageDialog(null, "Factura generada correctamente.");
+
+        } catch (Exception e) {
+            System.out.println("Error al generar PDF 1: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error al generar PDF 1 : " + e.getMessage());
+        }
+    }
 }
