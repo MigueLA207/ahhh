@@ -642,11 +642,24 @@ public class FormuVentas extends javax.swing.JInternalFrame {
 
     private void btncobrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btncobrarActionPerformed
         Controlador.ControlVenta objetoVenta = new Controlador.ControlVenta();
+
+        // Crear la factura en la base de datos
         objetoVenta.crearFactura(txtSidcliente);
+
+        // Realizar la venta
         objetoVenta.realizarVenta(tbresumenventa);
+
+        // === NUEVO: Generar el PDF ===
+        String idCliente = txtSidcliente.getText();
+        String nombreCliente = txtSnombrecliente.getText() + " " + txtSappaterno.getText() + " " + txtSapmaterno.getText();
+        String iva = lbliva.getText();
+        String total = lbltotal.getText();
+        objetoVenta.crearFacturaPDF(idCliente, nombreCliente, tbresumenventa, iva, total);
+
+        // Limpiar campos y continuar
         objetoVenta.LimpiarCampos(txtbuscarcliente, tbclientes, txtbuscarproductos, tbproductos, txtSidcliente, txtSnombrecliente, txtSappaterno, txtSapmaterno, txtSidproducto, txtSnombreproducto, txtSstock, txtSprecio, txtSprecioventa, txtcantidadventa, tbresumenventa, lbliva, lbltotal);
         objetoVenta.numerofactura(ultimaFactura);
-    }//GEN-LAST:event_btncobrarActionPerformed
+    } 
 
     private void txtbuscarclienteKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtbuscarclienteKeyReleased
         Controlador.ControlVenta objetoBenta = new Controlador.ControlVenta();
