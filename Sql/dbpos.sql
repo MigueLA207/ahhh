@@ -5,7 +5,7 @@ use dbpos;
 create table producto(
     idproducto int auto_increment not null primary key,
     nombre varchar(100),
-    precioProducto decimal (5,2),
+    precioProducto decimal (60,2),
     stock int
 );
 
